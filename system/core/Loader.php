@@ -394,7 +394,10 @@ class CI_Loader {
 
 		if ($return === TRUE)
 		{
-			return DB($params);
+			if (!isset($CI->config->config['cache_db_conn'][$params])) {
+                $CI->config->config['cache_db_conn'][$params] = DB($params);
+			} 
+			return $CI->config->config['cache_db_conn'][$params];
 		}
 
 		// Initialize the db variable. Needed to prevent
@@ -403,6 +406,7 @@ class CI_Loader {
 
 		// Load the DB class
 		$CI->db =& DB($params);
+		$CI->config->config['cache_db_conn'][$CI->db->default_active_group] = $CI->db;
 		return $this;
 	}
 

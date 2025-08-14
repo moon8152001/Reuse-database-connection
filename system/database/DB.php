@@ -81,6 +81,10 @@ function &DB($params = '')
 			}
 		}
 
+		if ($active_group) {
+			$default_active_group = $active_group;
+		}
+
 		if (empty($db))
 		{
 			show_error('No database connection settings were found in the database config file.');
@@ -190,5 +194,6 @@ function &DB($params = '')
 	}
 
 	$DB->initialize();
+	$DB->default_active_group = $default_active_group ?? 'defalut';
 	return $DB;
 }
