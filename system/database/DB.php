@@ -194,6 +194,8 @@ function &DB($params = '')
 	}
 
 	$DB->initialize();
+	$DB->db_read_only_suffix = $db_read_only_suffix ?? 'ReadOnly';
 	$DB->default_active_group = $default_active_group ?? 'defalut';
+	$DB->current_db_config = $db ?? null;
 	return $DB;
 }

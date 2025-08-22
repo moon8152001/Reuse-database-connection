@@ -713,6 +713,52 @@ abstract class CI_DB_driver {
 		return $RES;
 	}
 
+    public function check_current_db_config($current_operation = 1)
+    {
+    	$CI_CURRENT =& get_instance();
+
+        $default_active_group = $CI_CURRENT->db->default_active_group;
+        $db_read_only_suffix = $CI_CURRENT->db->db_read_only_suffix;
+
+        $db_config = $CI_CURRENT->config->config['cache_db_conn'][$default_active_group]->current_db_config;
+
+        foreach ($db_config as $key => $dbConfig) {
+		    if (isset($dbConfig['database']) && $dbConfig['database'] === $this->database) {
+		        $foundKeys[] = $key;
+		    }
+		}
+
+        if (isset($CI_CURRENT->config->config['cache_db_conn']['force_write_db'])) {
+            if ($CI_CURRENT->config->config['cache_db_conn']['force_write_db'] == 1 && $current_operation == 0) {
+                $current_operation = 1;
+            }
+        }
+
+        $need_db_config = '';
+		if ($current_operation === 0) {
+	        foreach ($foundKeys as $key) {
+	            if (stripos($key, $db_read_only_suffix) !== false) {
+	                $need_db_config = $key;
+	                break;
+	            }
+	        }
+	    } elseif ($current_operation === 1) {
+	        foreach ($foundKeys as $key) {
+	            if (stripos($key, $db_read_only_suffix) === false) {
+	                $need_db_config = $key;
+	                $CI_CURRENT->config->config['cache_db_conn']['force_write_db'] = 1;
+	                break;
+	            }
+	        }
+	    }
+
+        if (!isset($CI_CURRENT->config->config['cache_db_conn'][$need_db_config])) {
+    		$CI_CURRENT->config->config['cache_db_conn'][$need_db_config] = DB($need_db_config);
+    	}
+
+        return $CI_CURRENT->config->config['cache_db_conn'][$need_db_config]->_mysqli;
+    }
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -726,6 +772,10 @@ abstract class CI_DB_driver {
 	 */
 	public function simple_query($sql)
 	{
+		$current_operation = $this->is_write_type($sql) ? 1 : 0;
+		$operation_db_config = $this->check_current_db_config($current_operation);
+		$this->conn_id = $operation_db_config;
+		
 		empty($this->conn_id) && $this->initialize();
 		return $this->_execute($sql);
 	}
