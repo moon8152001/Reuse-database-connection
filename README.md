@@ -1,7 +1,8 @@
+
 Enhanced the CodeIgniter 3.2.0-dev ORM to provide built-in read-write separation for MySQLi. The implementation features:
-Query Routing: Automatic routing of write operations (Commands) to the primary node and read operations (Queries) to replica nodes.
-Connection Persistence: Maintenance and reuse of established master and replica connections within a request scope for reduced latency and improved efficiency.
-Database Layer Integration: Seamless integration into the framework's core database abstraction layer, ensuring backward compatibility.
+1. Query Routing: Automatic routing of write operations (Commands) to the primary node and read operations (Queries) to replica nodes.
+2. Connection Persistence: Maintenance and reuse of established master and replica connections within a request scope for reduced latency and improved efficiency.
+3. Database Layer Integration: Seamless integration into the framework's core database abstraction layer, ensuring backward compatibility.
 
 The following is the configuration description of read-write database
 ```php
