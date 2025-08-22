@@ -734,6 +734,10 @@ abstract class CI_DB_driver {
             }
         }
 
+        if ($this->_trans_status) {
+        	$current_operation = 1;
+        }
+
         $need_db_config = '';
 		if ($current_operation === 0) {
 	        foreach ($foundKeys as $key) {
