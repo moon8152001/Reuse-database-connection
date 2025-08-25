@@ -50,9 +50,11 @@ class Auth extends CI_Controller {
 
 	public function default_write_query()
 	{
+		$this->db->trans_begin();
 		$sql = "update users set modified ='" . date("Y-m-d H:i:s") . "' where id = 12618";
 		echo $sql . '<br>';
 		$query = $this->db->query($sql);
+		$this->db->trans_commit();
 	}
 
 

@@ -341,6 +341,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 	protected function _trans_begin()
 	{
 		$this->conn_id->autocommit(FALSE);
+        $this->conn_id = $this->check_current_db_config(1);
 		return is_php('5.5')
 			? $this->conn_id->begin_transaction()
 			: $this->simple_query('START TRANSACTION'); // can also be BEGIN or BEGIN WORK
